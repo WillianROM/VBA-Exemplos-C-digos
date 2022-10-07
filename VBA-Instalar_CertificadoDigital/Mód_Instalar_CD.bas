@@ -1,202 +1,95 @@
-Attribute VB_Name = "Mód_Instalar_CD"
+Attribute VB_Name = "Mód_ImportCD"
 
-#If VBA7 Then
-    'Para computadores de 64 bits
-    Public Declare PtrSafe Function FindWindow Lib "user32" Alias "FindWindowA" ( _
-    ByVal lpClassName As String, _
-    ByVal lpWindowName As String) As Long
+Dim oAutomation As New CUIAutomation
 
-
-    Public Declare PtrSafe Function FindWindowExW Lib "user32.dll" ( _
-    ByVal hWnd1 As Long, _
-    Optional ByVal hWnd2 As Long, _
-    Optional ByVal lpsz1 As String, _
-    Optional ByVal lpsz2 As String) As Long
-
-
-    Public Declare PtrSafe Function SendMessage Lib "user32" Alias "SendMessageA" ( _
-    ByVal Hwnd As Long, _
-    ByVal wMsg As Long, _
-    ByVal wParam As Long, _
-    lParam As Any) As Long
-
-
-    Public Declare PtrSafe Function SendMessageByString Lib "user32.dll" Alias "SendMessageA" ( _
-    ByVal Hwnd As Long, _
-    ByVal wMsg As Long, _
-    ByVal wParam As Long, _
-    ByVal lParam As String) As Long
+Sub ImportacaoDeCertificadoDigital()
+    'Localizar a janela: Assistente para Importação de Certificados
+    Dim janela As UIAutomationClient.IUIAutomationElement
+    Set janela = WalkEnabledElements(oAutomation.GetRootElement, "Assistente para Importação de Certificados")
+ 
+    'Localizar o botão avançar
+    Dim btnAvancar As UIAutomationClient.IUIAutomationElement
+    Set btnAvancar = janela.FindFirst(TreeScope_Children, PropCondition(oAutomation, "Avançar", "Name"))
     
-#Else
-'Para computadores de 32 bits
-    Public Declare Function FindWindow Lib "user32" Alias "FindWindowA" ( _
-    ByVal lpClassName As String, _
-    ByVal lpWindowName As String) As Long
-
-
-    Public Declare Function FindWindowExW Lib "user32.dll" ( _
-    ByVal hWnd1 As Long, _
-    Optional ByVal hWnd2 As Long, _
-    Optional ByVal lpsz1 As String, _
-    Optional ByVal lpsz2 As String) As Long
-
-
-    Public Declare Function SendMessage Lib "user32" Alias "SendMessageA" ( _
-    ByVal hWnd As Long, _
-    ByVal wMsg As Long, _
-    ByVal wParam As Long, _
-    lParam As Any) As Long
-
-
-    Public Declare Function SendMessageByString Lib "user32.dll" Alias "SendMessageA" ( _
-    ByVal hWnd As Long, _
-    ByVal wMsg As Long, _
-    ByVal wParam As Long, _
-    ByVal lParam As String) As Long
-
-#End If
-
-'=====================================================================
-
-Public Declare PtrSafe Function GetWindowText Lib "user32" Alias "GetWindowTextA" ( _
-ByVal Hwnd As Long, _
-ByVal lpString As String, _
-ByVal cch As Long) As Long
-
-
-
-Public Function IdBotão(JanelaMãe, Texto)
-
-    Dim TextoAPI As String * 255
-inicio:
+    'Clicar no botão Avançar duas vezes seguidas
+    Dim btnAvancarClick As UIAutomationClient.IUIAutomationInvokePattern
+    Set btnAvancarClick = btnAvancar.GetCurrentPattern(UIAutomationClient.UIA_InvokePatternId)
+    btnAvancarClick.Invoke
+    btnAvancarClick.Invoke
     
-    ElementoFilho = FindWindowExW(JanelaMãe)
-    ElementoFilho = FindWindowExW(ElementoFilho)
-    ElementoFilho = FindWindowExW(ElementoFilho)
+    'Localizar a "Caixa de diálogo"
+    Dim caixaDeDialogo As UIAutomationClient.IUIAutomationElement
+    Set caixaDeDialogo = janela.FindFirst(TreeScope_Children, PropCondition(oAutomation, "Win32PropSheetPageHost", "ClsName"))
     
+    'Localizar o campo Senha pelo LocalizedControlType Senha
+    Dim txtSenha As UIAutomationClient.IUIAutomationElement
+    Set txtSenha = caixaDeDialogo.FindFirst(TreeScope_Children, PropCondition(oAutomation, "editar", "LoczCon"))
+
+    'Informar a senha no campo Senha
+    Dim oPattern As UIAutomationClient.IUIAutomationLegacyIAccessiblePattern
+    Set oPattern = txtSenha.GetCurrentPattern(UIA_LegacyIAccessiblePatternId)
+    oPattern.SetValue ("12345678")
+
+    'Clicar no botão Avançar duas vezes seguidas
+    btnAvancarClick.Invoke
+    btnAvancarClick.Invoke
     
-    Do While ElementoFilho <> 0
-        TextoElemento = Left$(TextoAPI, GetWindowText(ElementoFilho, ByVal TextoAPI, 255))
-        
-        If TextoElemento Like "*" & Texto & "*" Then
-           IdBotão = ElementoFilho
-           Exit Function
-        End If
-      ElementoFilho = FindWindowExW(JanelaMãe, ElementoFilho)
-    Loop
-
-
-End Function
-
-Sub ManipulandoJanela(ByVal senha_CD As String)
-
-    'COMANDOS BÁSICOS
-    CLICAR = &HF5
-    FECHAR = &H10
-    WM_SETTEXT = &HC
+    'Localizar o botão Concluir
+    Dim btnConcluir As UIAutomationClient.IUIAutomationElement
+    Set btnConcluir = janela.FindFirst(TreeScope_Children, PropCondition(oAutomation, "Concluir", "Name"))
     
-    'LOCALIZA A JANELA PELO TITULO
-    Janela = FindWindow(vbNullString, "Assistente para Importação de Certificados") 'Assistente para Importação de Certificados
+    'Clicar no botão Concluir
+    Dim btnConcluirClick As UIAutomationClient.IUIAutomationInvokePattern
+    Set btnConcluirClick = btnConcluir.GetCurrentPattern(UIAutomationClient.UIA_InvokePatternId)
+    btnConcluirClick.Invoke
     
-    'LOCALIZA BOTÃO PELO TEXTO
-    Botão = IdBotão(Janela, "A&vançar")
+    'Aguardar 1 segundo
+    Application.Wait (Now + TimeValue("00:00:01"))
     
-    'ENVIA O COMANDO P/ O BOTÃO
-    SendMessage Botão, CLICAR, 0, 0
-    SendMessage Botão, CLICAR, 0, 0
-
-'=============================================================================================
-    Rem COLOCAR A SENHA
-    Application.Wait (Now + TimeValue("0:00:01"))
+    'Localizar a janela: Assistente para Importação de Certificados
+    Dim janela2 As UIAutomationClient.IUIAutomationElement
+    Set janela2 = WalkEnabledElements(oAutomation.GetRootElement, "Assistente para Importação de Certificados")
+   
+    'Localizar o botão OK
+    Dim btnOK As UIAutomationClient.IUIAutomationElement
+    Set btnOK = janela2.FindFirst(TreeScope_Children, PropCondition(oAutomation, "OK", "Name"))
     
-    Dim TextoAPI As String * 255
+    'Clicar no botão Concluir
+    Dim btnOKClick As UIAutomationClient.IUIAutomationInvokePattern
+    Set btnOKClick = btnOK.GetCurrentPattern(UIAutomationClient.UIA_InvokePatternId)
+    btnOKClick.Invoke
     
-    Janela = FindWindow("NativeHWNDHost", "Assistente para Importação de Certificados")
-    ElementoFilho = FindWindowExW(Janela)
-    
-    
-    prevChild = 0
-    currChild = 0
-    
-    WM_SETTEXT = &HC
-    
-    'Achar o Último filho
-
-    Do
-        currChild = FindWindowExW(ElementoFilho, prevChild, vbNullString, vbNullString)
-        
-        If currChild = 0 Then GoTo ulimo_neto
-        
-        TextoElemento = Left$(TextoAPI, GetWindowText(FindWindowExW(currChild), ByVal TextoAPI, 255))
-        
-        prevChild = currChild
-    
-    Loop While (currChild <> 0)
-
-
-
-    'Unico filho
-ulimo_neto:
-    
-    
-    ElementoFilho = prevChild
-    prevChild = 0
-    
-    Do
-        currChild = FindWindowExW(ElementoFilho, prevChild, vbNullString, vbNullString)
-        
-        If currChild = 0 Then GoTo Achar_Campo_Senha
-        
-        
-        TextoElemento = Left$(TextoAPI, GetWindowText(FindWindowExW(currChild), ByVal TextoAPI, 255))
-        
-        prevChild = currChild
-    Loop While (currChild <> 0)
-
-
-
-    'Achar o campo para colocar a senha
-Achar_Campo_Senha:
-    
-    ElementoFilho = prevChild
-    prevChild = 0
-    
-    Do
-        currChild = FindWindowExW(ElementoFilho, prevChild, vbNullString, vbNullString)
-        
-        
-        TextoElemento = Left$(TextoAPI, GetWindowText(currChild, ByVal TextoAPI, 255))
-        
-        If TextoElemento = "&Senha:" Then
-            prevChild = currChild
-            SendMessageByString FindWindowExW(ElementoFilho, prevChild, vbNullString, vbNullString), WM_SETTEXT, 0, senha_CD
-        End If
-        
-        prevChild = currChild
-    Loop While (currChild <> 0)
-
-
-    '=============================================================================================
-    'ENVIA O COMANDO P/ O BOTÃO
-    For i = 1 To 6
-        SendMessage Botão, CLICAR, 0, 0
-    Next i
-
-
-    '=============================================================================================
-    'Clicar em Ok na caixa de mensagem
-    Application.Wait (Now + TimeValue("0:00:01"))
-    
-    Janela = FindWindow(vbNullString, "Assistente para Importação de Certificados")
-    ElementoFilho = FindWindowExW(Janela)
-    
-    For i = 1 To 2
-        SendMessage ElementoFilho, CLICAR, 0, 0
-    Next i
-
-
-
 
 End Sub
 
+
+Function WalkEnabledElements(element As UIAutomationClient.IUIAutomationElement, strWIndowName As String) As UIAutomationClient.IUIAutomationElement
+
+    Dim walker As UIAutomationClient.IUIAutomationTreeWalker
+    
+    Set walker = oAutomation.ControlViewWalker
+    Set element = walker.GetFirstChildElement(element)
+    
+    Do While Not element Is Nothing
+    
+        If InStr(1, element.CurrentName, strWIndowName) > 0 Then
+            Set WalkEnabledElements = element
+            Exit Function
+        End If
+        Set element = walker.GetNextSiblingElement(element)
+    Loop
+End Function
+
+Function PropCondition(UIAutomation As CUIAutomation, Requirement As String, IdType As String) As UIAutomationClient.IUIAutomationCondition
+    Select Case IdType
+        Case "Name":
+            Set PropCondition = UIAutomation.CreatePropertyCondition(UIAutomationClient.UIA_NamePropertyId, Requirement)
+        Case "AutoID":
+            Set PropCondition = UIAutomation.CreatePropertyCondition(UIAutomationClient.UIA_AutomationIdPropertyId, Requirement)
+        Case "ClsName":
+            Set PropCondition = UIAutomation.CreatePropertyCondition(UIAutomationClient.UIA_ClassNamePropertyId, Requirement)
+        Case "LoczCon":
+            Set PropCondition = UIAutomation.CreatePropertyCondition(UIAutomationClient.UIA_LocalizedControlTypePropertyId, Requirement)
+    End Select
+End Function
 
