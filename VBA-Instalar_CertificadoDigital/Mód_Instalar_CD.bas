@@ -1,5 +1,7 @@
 Attribute VB_Name = "Mód_ImportCD"
 
+'Nas referências tem que deixar marcado a opção UIAutomationClient
+
 Dim oAutomation As New CUIAutomation
 
 Sub ImportacaoDeCertificadoDigital()
