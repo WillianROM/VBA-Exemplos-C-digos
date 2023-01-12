@@ -1,0 +1,1 @@
+Thank you very much Ron de Bruin for your function RangetoHTML, it's very nice,
