@@ -63,6 +63,17 @@ Function funcUltimaColuna(ByVal aba As Worksheet, ByVal linha As Long)
 End Function
 
 
+Function formatarCpfCnpj(ByVal txt_cpf_cnpj As String)
+
+    If Len(txt_cpf_cnpj) <= 11 Then
+        formatarCpfCnpj = Format(txt_cpf_cnpj, "000"".""000"".""000""-""00")
+    Else
+        formatarCpfCnpj = Format(txt_cpf_cnpj, "00"".""000"".""000""/""0000""-""00")
+    End If
+
+End Function
+
+
 Function listarArquivos(Optional ByVal extensao As String)
     Dim Pasta                       As String
     Dim QtdArquivosComAExtensao     As Long
@@ -125,6 +136,7 @@ Function CountFiles(ByVal extensao As String) As Long
     CountFiles = xCount
     
 End Function
+
 
 Public Function IsOutlookRunning() As Boolean
     Dim olApp As Object
