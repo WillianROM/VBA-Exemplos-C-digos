@@ -155,10 +155,84 @@ Public Function IsOutlookRunning() As Boolean
 End Function
 
 
+Function CriarMatrizRemovendoRepeticoes(ByVal ws As Worksheet, ByVal posColuna As Long, ByVal linhaInicial As Long, ByVal linhaFinal As Long) As Variant
+
+    Dim matriz()        As Variant
+    Dim coluna          As Range
+    Dim i               As Long
+    Dim j               As Long
+    Dim k               As Long
+    Dim valorAtual      As Variant
+    Dim linhasMatriz    As Long
+   
+    ' Selecionar a coluna com os dados
+    Set coluna = ws.Range(Cells(linhaInicial, posColuna).Address, Cells(linhaFinal, posColuna).Address)
+   
+    ' Inicializar a matriz com todos os valores da coluna
+    ReDim matriz(0 To coluna.Rows.Count - 1)
+    For i = 1 To coluna.Rows.Count
+        matriz(i - 1) = coluna.Cells(i, 1).Value
+    Next i
+   
+    ' Remover os valores repetidos da matriz
+
+    '==================================================
+    Dim nPrimeira       As Long
+    Dim nUltima         As Long
+    Dim item            As String
+   
+    Dim arrTemp()       As String
+    Dim Coll            As New Collection
+   
+     'Obter a primeira e a última posição da matriz
+     nPrimeira = LBound(matriz)
+     nUltima = UBound(matriz)
+     ReDim arrTemp(nPrimeira To nUltima)
+   
+     'Converter matriz em string
+     For i = nPrimeira To nUltima
+        arrTemp(i) = CStr(matriz(i))
+     Next i
+       
+     'Preencher a coleção temporária
+     On Error Resume Next
+     For i = nPrimeira To nUltima
+        Coll.Add arrTemp(i), arrTemp(i)
+     Next i
+     Err.Clear
+     On Error GoTo 0
+   
+     'Redimensionar a matriz
+     nUltima = Coll.Count + nPrimeira - 1
+     ReDim arrTemp(nPrimeira To nUltima)
+       
+     'Preencher a matriz
+     For i = nPrimeira To nUltima
+        arrTemp(i) = Coll(i - nPrimeira + 1)
+     Next i
+       
+   
+   
+    '================================================================
+   
+     ' Redimensionar a matriz para remover as linhas vazias
+    ReDim Preserve arrTemp(0 To nUltima)
+   
+    ' Retornar a matriz
+    CriarMatrizRemovendoRepeticoes = arrTemp()
+   
+End Function
+
 
 '=======================================================================================================================
 ' Funções criadas por outras pessoas
 '=======================================================================================================================
+
+Function IsInArray(stringToBeFound As String, arr As Variant) As Boolean
+    'função para identificar se algum item corresponde ao conjunto de array
+    IsInArray = (UBound(Filter(arr, stringToBeFound)) > -1)
+End Function
+
 
 Function RangetoHTML(rng As Range)
 ' Changed by Ron de Bruin 28-Oct-2006
