@@ -10,216 +10,216 @@ End Function
 
 
 Function posicaoLinhaDoTitulo(ByVal aba As Worksheet, linhaDoTitulo As Long, tituloALocalizar As String)
-    Dim i           As Long
-    Dim qtdLinhas   As Long
+	Dim i           As Long
+    	Dim qtdLinhas   As Long
     
-    Let qtdLinhas = WorksheetFunction.CountA(aba.Columns(linhaDoTitulo))
+    	Let qtdLinhas = WorksheetFunction.CountA(aba.Columns(linhaDoTitulo))
 
-    For i = 1 To qtdLinhas
-        If aba.Cells(i, linhaDoTitulo) = tituloALocalizar Then
-            posicaoLinhaDoTitulo = i
-            Exit For
-        End If
-    Next i
+    	For i = 1 To qtdLinhas
+        		If aba.Cells(i, linhaDoTitulo) = tituloALocalizar Then
+            			posicaoLinhaDoTitulo = i
+            			Exit For
+        		End If
+    	Next i
 
 End Function
 
 
 Function posicaoColunaDoTitulo(ByVal aba As Worksheet, linhaDoTitulo As Long, tituloALocalizar As String)
-    Dim i           As Long
-    Dim qtdColunas  As Long
+    	Dim i           As Long
+    	Dim qtdColunas  As Long
     
-    Let qtdColunas = funcUltimaColuna(aba, linhaDoTitulo)
+    	Let qtdColunas = funcUltimaColuna(aba, linhaDoTitulo)
 
-    For i = 1 To qtdColunas
-        If aba.Cells(linhaDoTitulo, i) = tituloALocalizar Then
-            posicaoColunaDoTitulo = i
-            Exit For
-        End If
-    Next i
+    	For i = 1 To qtdColunas
+        		If aba.Cells(linhaDoTitulo, i) = tituloALocalizar Then
+            			posicaoColunaDoTitulo = i
+            			Exit For
+        		End If
+    	Next i
 
 End Function
 
 
 Function funcUltimaLinha(ByVal aba As Worksheet, ByVal posColuna As Long)
 
-    aba.Activate
+    	aba.Activate
     
-    ' Definir a posição da última linha
-    aba.Cells(Rows.Count, posColuna).End(xlUp).Select
-    funcUltimaLinha = ActiveCell.Row
+    	' Definir a posição da última linha
+    	aba.Cells(Rows.Count, posColuna).End(xlUp).Select
+    	funcUltimaLinha = ActiveCell.Row
     
 End Function
 
 
 Function funcUltimaColuna(ByVal aba As Worksheet, ByVal linha As Long)
 
-    aba.Activate
+    	aba.Activate
     
-    ' Definir a posição da última linha
-    aba.Cells(linha, Columns.Count).End(xlToLeft).Select
-    funcUltimaColuna = ActiveCell.Column
+    	' Definir a posição da última linha
+    	aba.Cells(linha, Columns.Count).End(xlToLeft).Select
+    	funcUltimaColuna = ActiveCell.Column
     
 End Function
 
 
 Function formatarCpfCnpj(ByVal txt_cpf_cnpj As String)
 
-    If Len(txt_cpf_cnpj) <= 11 Then
-        formatarCpfCnpj = Format(txt_cpf_cnpj, "000"".""000"".""000""-""00")
-    Else
-        formatarCpfCnpj = Format(txt_cpf_cnpj, "00"".""000"".""000""/""0000""-""00")
-    End If
+    	If Len(txt_cpf_cnpj) <= 11 Then
+        f		ormatarCpfCnpj = Format(txt_cpf_cnpj, "000"".""000"".""000""-""00")
+    	Else
+        		formatarCpfCnpj = Format(txt_cpf_cnpj, "00"".""000"".""000""/""0000""-""00")
+    	End If
 
 End Function
 
 
 Function listarArquivos(Optional ByVal extensao As String)
-    Dim Pasta                       As String
-    Dim QtdArquivosComAExtensao     As Long
-    Dim n                           As Double
-    Dim arrayNomesDosArquivos()
-    Dim Arq
+    	Dim Pasta                       As String
+    	Dim QtdArquivosComAExtensao     As Long
+    	Dim n                           As Double
+    	Dim arrayNomesDosArquivos()
+    	Dim Arq
 
-    Let QtdArquivosComAExtensao = CountFiles(extensao)
+	Let QtdArquivosComAExtensao = CountFiles(extensao)
 
-    ReDim arrayNomesDosArquivos(QtdArquivosComAExtensao - 1)
+    	ReDim arrayNomesDosArquivos(QtdArquivosComAExtensao - 1)
 
-    'Variável armazena o local do arquivo
+    	'Variável armazena o local do arquivo
     
-    Let Pasta = ThisWorkbook.Path & "\"
+    	Let Pasta = ThisWorkbook.Path & "\"
     
-    'Verifica se Existe a estensão do arquivo
-    If extensao = "" Then extensao = "*"
+    	'Verifica se Existe a estensão do arquivo
+    	If extensao = "" Then extensao = "*"
     
-    'Junta Pasta e Extensão
-    Let Arq = Dir(Pasta & extensao)
+    	'Junta Pasta e Extensão
+    	Let Arq = Dir(Pasta & extensao)
     
-    'Informar o número da linha
+    	'Informar o número da linha
     
-    Let n = 0
+    	Let n = 0
     
-    'Verifica os arquivos até a variável Arq ficar vazia
-    Do Until Arq = ""
-        'Carrega o nome dos arquivos na célula
-        arrayNomesDosArquivos(n) = Arq
+    	'Verifica os arquivos até a variável Arq ficar vazia
+    	Do Until Arq = ""
+        		'Carrega o nome dos arquivos na célula
+        		arrayNomesDosArquivos(n) = Arq
         
-        Arq = Dir
-        n = n + 1
+        		Arq = Dir
+        		n = n + 1
         
-    Loop
+    	Loop
 
-    listarArquivos = arrayNomesDosArquivos
+	listarArquivos = arrayNomesDosArquivos
 
 End Function
 
 
 Function CountFiles(ByVal extensao As String) As Long
-    Dim xFolder         As String
-    Dim xPath           As String
-    Dim xCount          As Long
-    Dim xFile           As String
+    	Dim xFolder         As String
+    	Dim xPath           As String
+    	Dim xCount          As Long
+    	Dim xFile           As String
     
 
-    xFolder = ThisWorkbook.Path
+    	xFolder = ThisWorkbook.Path
     
-    If xFolder = "" Then Exit Function
+    	If xFolder = "" Then Exit Function
     
-    xPath = xFolder & "\" & extensao
-    xFile = Dir(xPath)
+    	xPath = xFolder & "\" & extensao
+    	xFile = Dir(xPath)
     
-    Do While xFile <> ""
-        xCount = xCount + 1
-        xFile = Dir()
-    Loop
+    	Do While xFile <> ""
+        		xCount = xCount + 1
+        		xFile = Dir()
+    	Loop
     
-    CountFiles = xCount
+    	CountFiles = xCount
     
 End Function
 
 
 Public Function IsOutlookRunning() As Boolean
-    Dim olApp As Object
+    	Dim olApp As Object
     
-    On Error Resume Next
-    Set olApp = GetObject(, "Outlook.Application")
-    On Error GoTo 0
+    	On Error Resume Next
+    	Set olApp = GetObject(, "Outlook.Application")
+    	On Error GoTo 0
     
-    If Not olApp Is Nothing Then
-        IsOutlookRunning = True
-    Else
-        IsOutlookRunning = False
-    End If
+    	If Not olApp Is Nothing Then
+        		IsOutlookRunning = True
+    	Else
+        		IsOutlookRunning = False
+    	End If
     
-    Set olApp = Nothing
+    	Set olApp = Nothing
 End Function
 
 
 Function CriarMatrizRemovendoRepeticoes(ByVal ws As Worksheet, ByVal posColuna As Long, ByVal linhaInicial As Long, ByVal linhaFinal As Long) As Variant
 
-    Dim matriz()        As Variant
-    Dim coluna          As Range
-    Dim i               As Long
-    Dim j               As Long
-    Dim k               As Long
-    Dim valorAtual      As Variant
-    Dim linhasMatriz    As Long
+    	Dim matriz()        	As Variant
+    	Dim coluna          	As Range
+    	Dim i               	As Long
+    	Dim j               	As Long
+    	Dim k               	As Long
+    	Dim valorAtual      	As Variant
+    	Dim linhasMatriz    	As Long
    
-    ' Selecionar a coluna com os dados
-    Set coluna = ws.Range(Cells(linhaInicial, posColuna).Address, Cells(linhaFinal, posColuna).Address)
+   	 ' Selecionar a coluna com os dados
+    	Set coluna = ws.Range(Cells(linhaInicial, posColuna).Address, Cells(linhaFinal, posColuna).Address)
    
-    ' Inicializar a matriz com todos os valores da coluna
-    ReDim matriz(0 To coluna.Rows.Count - 1)
-    For i = 1 To coluna.Rows.Count
-        matriz(i - 1) = coluna.Cells(i, 1).Value
-    Next i
+    	' Inicializar a matriz com todos os valores da coluna
+    	ReDim matriz(0 To coluna.Rows.Count - 1)
+    	For i = 1 To coluna.Rows.Count
+        		matriz(i - 1) = coluna.Cells(i, 1).Value
+    	Next i
    
-    ' Remover os valores repetidos da matriz
+    	' Remover os valores repetidos da matriz
 
     '==================================================
-    Dim nPrimeira       As Long
-    Dim nUltima         As Long
-    Dim item            As String
+    	Dim nPrimeira       	As Long
+    	Dim nUltima         	As Long
+    	Dim item            	As String
    
-    Dim arrTemp()       As String
-    Dim Coll            As New Collection
+    	Dim arrTemp()	As String
+    	Dim Coll            	As New Collection
    
-     'Obter a primeira e a última posição da matriz
-     nPrimeira = LBound(matriz)
-     nUltima = UBound(matriz)
-     ReDim arrTemp(nPrimeira To nUltima)
+     	'Obter a primeira e a última posição da matriz
+     	nPrimeira = LBound(matriz)
+     	nUltima = UBound(matriz)
+     	ReDim arrTemp(nPrimeira To nUltima)
    
-     'Converter matriz em string
-     For i = nPrimeira To nUltima
-        arrTemp(i) = CStr(matriz(i))
-     Next i
+     	'Converter matriz em string
+     	For i = nPrimeira To nUltima
+        		arrTemp(i) = CStr(matriz(i))
+     	Next i
        
-     'Preencher a coleção temporária
-     On Error Resume Next
-     For i = nPrimeira To nUltima
-        Coll.Add arrTemp(i), arrTemp(i)
-     Next i
-     Err.Clear
-     On Error GoTo 0
+     	'Preencher a coleção temporária
+     	On Error Resume Next
+     	For i = nPrimeira To nUltima
+        		Coll.Add arrTemp(i), arrTemp(i)
+     	Next i
+     	Err.Clear
+     	On Error GoTo 0
    
-     'Redimensionar a matriz
-     nUltima = Coll.Count + nPrimeira - 1
-     ReDim arrTemp(nPrimeira To nUltima)
+     	'Redimensionar a matriz
+     	nUltima = Coll.Count + nPrimeira - 1
+     	ReDim arrTemp(nPrimeira To nUltima)
        
-     'Preencher a matriz
-     For i = nPrimeira To nUltima
-        arrTemp(i) = Coll(i - nPrimeira + 1)
-     Next i
+     	'Preencher a matriz
+     	For i = nPrimeira To nUltima
+        		arrTemp(i) = Coll(i - nPrimeira + 1)
+     	Next i
        
    
    
     '================================================================
    
-     ' Redimensionar a matriz para remover as linhas vazias
-    ReDim Preserve arrTemp(0 To nUltima)
+     	' Redimensionar a matriz para remover as linhas vazias
+    	ReDim Preserve arrTemp(0 To nUltima)
    
-    ' Retornar a matriz
-    CriarMatrizRemovendoRepeticoes = arrTemp()
+    	' Retornar a matriz
+    	CriarMatrizRemovendoRepeticoes = arrTemp()
    
 End Function
 
@@ -229,8 +229,26 @@ End Function
 '=======================================================================================================================
 
 Function IsInArray(stringToBeFound As String, arr As Variant) As Boolean
-    'função para identificar se algum item corresponde ao conjunto de array
-    IsInArray = (UBound(Filter(arr, stringToBeFound)) > -1)
+   	'função para identificar se algum item corresponde ao conjunto de array
+   	IsInArray = (UBound(Filter(arr, stringToBeFound)) > -1)
+End Function
+
+
+Function emojiToChrW(emoji As String) As String
+
+	Dim output 	As String
+	Dim i		As Long
+
+	For i = 1 To Len(emoji)
+
+		output = output & "ChrW(" & AscW(Mid(emoji, i, 1)) & ") & "
+
+	Next i
+
+	output = Left(output, Len(output) - 3)
+
+	emojiToChrW = output
+
 End Function
 
 
